@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Copy Kraken</string>
-    <string name="greeting">Hello %1$s!</string>
+    <string name="greeting">Ciao %1$s!</string>
 </resources>
