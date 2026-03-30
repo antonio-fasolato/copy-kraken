@@ -29,6 +29,21 @@ fun MainScreen(
     LazyColumn(modifier = modifier.padding(horizontal = 16.dp)) {
         item {
             Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(top = 24.dp, bottom = 4.dp)
+            )
+        }
+        item {
+            Text(
+                text = stringResource(R.string.app_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+        item {
+            Text(
                 text = stringResource(R.string.current_text_label),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)

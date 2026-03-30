@@ -31,24 +31,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-The app uses a single-Activity architecture with Jetpack Compose and a `ViewModel` per screen:
+The app uses a single-Activity architecture with Jetpack Compose:
 
-- **`MainActivity`** — sole entry point; handles share intents (`ACTION_SEND`) in both `onCreate` and `onNewIntent`; hosts the Compose UI tree inside a `Scaffold`
-- **`MainViewModel`** — holds `MainUiState` (current text + history list) as `StateFlow`; exposes `clipboardEvent: SharedFlow<String>` for one-shot clipboard writes; methods: `onSharedText(text)`, `archiveCurrent()`
-- **`MainScreen`** — stateless composable; receives `MainUiState` and `onArchive` lambda; renders current text card, archive button, history list
-- **`ui/theme/`** — Material3 theme setup (Color, Type, Theme); dynamic color enabled for Android 12+
+- **`MainActivity`** — sole entry point; hosts the Compose UI tree inside a `Scaffold` with a FAB; calls `viewModel.reload()` in `onResume`; collects `clipboardEvent` via `LaunchedEffect` to write to `ClipboardManager`
+- **`MainViewModel`** — `AndroidViewModel`; initialises state from `AppStorage`; exposes `uiState: StateFlow<MainUiState>` and `clipboardEvent: SharedFlow<String>`; methods: `reload()`, `archiveCurrent()`, `restoreFromHistory(index)`
+- **`MainScreen`** — stateless composable; receives `MainUiState`, `onArchive`, `onRestoreFromHistory`; renders app header (name + description), current text card, history list with tappable cards
+- **`AppStorage`** — `SharedPreferences` wrapper; persists `currentText` and `history` (serialised via `org.json.JSONArray`); method `appendText(text): String`
+- **`ShareReceiverActivity`** — bare `Activity` with `Theme.NoDisplay`; receives `ACTION_SEND / text/plain`; appends text via `AppStorage`, copies to clipboard, shows Toast, calls `finish()` immediately
+- **`ui/theme/`** — Material3 theme (Color, Type, Theme); dynamic color enabled for Android 12+
 - Package root: `fasolato.click.copykraken`
 
 New screens should be added as composable functions, placed in packages under the main package (e.g., `fasolato.click.copykraken.feature.featurename`).
 
 ## Share target
 
-The app registers as an Android share target for `text/plain`:
+The app registers as an Android share target for `text/plain` via `ShareReceiverActivity`:
 
-- `AndroidManifest.xml` declares `android:launchMode="singleTop"` and an `ACTION_SEND / text/plain` intent-filter on `MainActivity`
-- Shared text is appended to the current text (newline separator); the full resulting text is copied to the system clipboard via `ClipboardManager`
-- The clipboard write is triggered by collecting `MainViewModel.clipboardEvent` in a `LaunchedEffect(Unit)` inside `setContent` — the ViewModel never holds a `Context`
-- State is in-memory only (survives configuration changes, not process death)
+- `AndroidManifest.xml` declares `ShareReceiverActivity` with `android:theme="@android:style/Theme.NoDisplay"` and an `ACTION_SEND / text/plain` intent-filter
+- After sharing, the user stays in the originating app; Copy Kraken shows only a Toast confirmation
+- `MainActivity` is not involved in the share flow; it picks up changes via `viewModel.reload()` in `onResume`
+
+## UI — FAB
+
+The archive action is a `FloatingActionButton` (bottom-right) using `Icons.Default.Archive` from `material-icons-extended`. It is visible only when `currentText` is non-empty.
+
+## History interaction
+
+Tapping a history card calls `viewModel.restoreFromHistory(index)`:
+- the tapped entry is removed from history and becomes the new current text
+- if there was a current text, it is prepended to the remaining history
+- the restored text is copied to the system clipboard via `clipboardEvent`
 
 ## Internationalisation (i18n)
 

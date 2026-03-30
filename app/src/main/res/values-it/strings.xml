@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Copy Kraken</string>
+    <string name="app_description">Raccogli testi condivisi da qualsiasi app, accumulali e tienili pronti negli appunti.</string>
     <string name="current_text_label">Testo corrente</string>
     <string name="history_label">Cronologia</string>
     <string name="archive_button">Archivia e ricomincia</string>
