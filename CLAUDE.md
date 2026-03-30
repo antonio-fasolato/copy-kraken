@@ -31,13 +31,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-The app uses a single-Activity architecture with Jetpack Compose:
+The app uses a single-Activity architecture with Jetpack Compose and a `ViewModel` per screen:
 
-- **`MainActivity`** — sole entry point, hosts the Compose UI tree inside a `Scaffold`
+- **`MainActivity`** — sole entry point; handles share intents (`ACTION_SEND`) in both `onCreate` and `onNewIntent`; hosts the Compose UI tree inside a `Scaffold`
+- **`MainViewModel`** — holds `MainUiState` (current text + history list) as `StateFlow`; exposes `clipboardEvent: SharedFlow<String>` for one-shot clipboard writes; methods: `onSharedText(text)`, `archiveCurrent()`
+- **`MainScreen`** — stateless composable; receives `MainUiState` and `onArchive` lambda; renders current text card, archive button, history list
 - **`ui/theme/`** — Material3 theme setup (Color, Type, Theme); dynamic color enabled for Android 12+
 - Package root: `fasolato.click.copykraken`
 
 New screens should be added as composable functions, placed in packages under the main package (e.g., `fasolato.click.copykraken.feature.featurename`).
+
+## Share target
+
+The app registers as an Android share target for `text/plain`:
+
+- `AndroidManifest.xml` declares `android:launchMode="singleTop"` and an `ACTION_SEND / text/plain` intent-filter on `MainActivity`
+- Shared text is appended to the current text (newline separator); the full resulting text is copied to the system clipboard via `ClipboardManager`
+- The clipboard write is triggered by collecting `MainViewModel.clipboardEvent` in a `LaunchedEffect(Unit)` inside `setContent` — the ViewModel never holds a `Context`
+- State is in-memory only (survives configuration changes, not process death)
 
 ## Internationalisation (i18n)
 
