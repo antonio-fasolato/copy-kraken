@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Copy Kraken</string>
-    <string name="greeting">Hello %1$s!</string>
+    <string name="current_text_label">Current text</string>
+    <string name="history_label">History</string>
+    <string name="archive_button">Archive &amp; start fresh</string>
+    <string name="history_empty">No archived texts yet</string>
+    <string name="clipboard_label">CopyKraken</string>
 </resources>
