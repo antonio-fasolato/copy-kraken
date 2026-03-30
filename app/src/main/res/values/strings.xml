@@ -5,4 +5,5 @@
     <string name="archive_button">Archive &amp; start fresh</string>
     <string name="history_empty">No archived texts yet</string>
     <string name="clipboard_label">CopyKraken</string>
+    <string name="share_received_toast">Text added and copied to clipboard</string>
 </resources>

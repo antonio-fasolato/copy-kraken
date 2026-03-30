@@ -2,7 +2,6 @@ package fasolato.click.copykraken
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,8 +25,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        intent?.getSharedText()?.let { viewModel.onSharedText(it) }
-
         setContent {
             CopyKrakenTheme {
                 val uiState by viewModel.uiState.collectAsState()
@@ -36,11 +33,9 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(Unit) {
                     viewModel.clipboardEvent.collect { text ->
                         val clipboard = context.getSystemService(ClipboardManager::class.java)
-                        val clip = ClipData.newPlainText(
-                            context.getString(R.string.clipboard_label),
-                            text
+                        clipboard.setPrimaryClip(
+                            ClipData.newPlainText(context.getString(R.string.clipboard_label), text)
                         )
-                        clipboard.setPrimaryClip(clip)
                     }
                 }
 
@@ -48,6 +43,7 @@ class MainActivity : ComponentActivity() {
                     MainScreen(
                         uiState = uiState,
                         onArchive = viewModel::archiveCurrent,
+                        onRestoreFromHistory = viewModel::restoreFromHistory,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -55,12 +51,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        intent.getSharedText()?.let { viewModel.onSharedText(it) }
+    override fun onResume() {
+        super.onResume()
+        viewModel.reload()
     }
-
-    private fun Intent.getSharedText(): String? =
-        takeIf { action == Intent.ACTION_SEND && type == "text/plain" }
-            ?.getStringExtra(Intent.EXTRA_TEXT)
 }

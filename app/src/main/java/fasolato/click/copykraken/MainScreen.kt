@@ -24,6 +24,7 @@ import fasolato.click.copykraken.ui.theme.CopyKrakenTheme
 fun MainScreen(
     uiState: MainUiState,
     onArchive: () -> Unit,
+    onRestoreFromHistory: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier.padding(horizontal = 16.dp)) {
@@ -77,8 +78,9 @@ fun MainScreen(
                 )
             }
         } else {
-            items(uiState.history) { entry ->
+            items(uiState.history.size) { index ->
                 Card(
+                    onClick = { onRestoreFromHistory(index) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),
@@ -87,7 +89,7 @@ fun MainScreen(
                     )
                 ) {
                     Text(
-                        text = entry,
+                        text = uiState.history[index],
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(12.dp)
                     )
@@ -101,7 +103,7 @@ fun MainScreen(
 @Composable
 private fun MainScreenEmptyPreview() {
     CopyKrakenTheme {
-        MainScreen(uiState = MainUiState(), onArchive = {})
+        MainScreen(uiState = MainUiState(), onArchive = {}, onRestoreFromHistory = {})
     }
 }
 
@@ -114,7 +116,8 @@ private fun MainScreenWithDataPreview() {
                 currentText = "Testo corrente accumulato\ncon una seconda riga",
                 history = listOf("Primo blocco archiviato", "Secondo blocco archiviato")
             ),
-            onArchive = {}
+            onArchive = {},
+            onRestoreFromHistory = {}
         )
     }
 }

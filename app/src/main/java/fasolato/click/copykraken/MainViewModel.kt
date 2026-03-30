@@ -1,6 +1,7 @@
 package fasolato.click.copykraken
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,10 +18,9 @@ data class MainUiState(
     val history: List<String> = emptyList()
 )
 
-class MainViewModel : ViewModel() {
+class MainViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val _uiState = MutableStateFlow(MainUiState())
-    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+    private val storage = AppStorage(app)
 
     private val _clipboardEvent = MutableSharedFlow<String>(
         replay = 0,
@@ -29,15 +29,32 @@ class MainViewModel : ViewModel() {
     )
     val clipboardEvent: SharedFlow<String> = _clipboardEvent.asSharedFlow()
 
-    fun onSharedText(text: String) {
-        val current = _uiState.value.currentText
-        val newText = if (current.isEmpty()) text else "$current\n$text"
-        _uiState.update { it.copy(currentText = newText) }
-        viewModelScope.launch { _clipboardEvent.emit(newText) }
+    private val _uiState = MutableStateFlow(
+        MainUiState(currentText = storage.currentText, history = storage.history)
+    )
+    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+
+    fun reload() {
+        _uiState.update { MainUiState(currentText = storage.currentText, history = storage.history) }
     }
 
     fun archiveCurrent() {
         val current = _uiState.value.currentText.ifEmpty { return }
-        _uiState.update { it.copy(currentText = "", history = listOf(current) + it.history) }
+        val newHistory = listOf(current) + _uiState.value.history
+        storage.currentText = ""
+        storage.history = newHistory
+        _uiState.update { MainUiState(currentText = "", history = newHistory) }
+    }
+
+    fun restoreFromHistory(index: Int) {
+        val state = _uiState.value
+        val restored = state.history.getOrNull(index) ?: return
+        val remaining = state.history.toMutableList().also { it.removeAt(index) }
+        val newHistory = if (state.currentText.isEmpty()) remaining
+                         else listOf(state.currentText) + remaining
+        storage.currentText = restored
+        storage.history = newHistory
+        _uiState.update { MainUiState(currentText = restored, history = newHistory) }
+        viewModelScope.launch { _clipboardEvent.emit(restored) }
     }
 }

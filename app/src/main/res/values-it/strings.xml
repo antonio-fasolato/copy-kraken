@@ -5,4 +5,5 @@
     <string name="archive_button">Archivia e ricomincia</string>
     <string name="history_empty">Nessun testo archiviato</string>
     <string name="clipboard_label">CopyKraken</string>
+    <string name="share_received_toast">Testo aggiunto e copiato negli appunti</string>
 </resources>
