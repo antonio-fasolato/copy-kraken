@@ -38,3 +38,12 @@ The app uses a single-Activity architecture with Jetpack Compose:
 - Package root: `fasolato.click.copykraken`
 
 New screens should be added as composable functions, placed in packages under the main package (e.g., `fasolato.click.copykraken.feature.featurename`).
+
+## Internationalisation (i18n)
+
+The app is localised with **English as the default** and **Italian** as an alternative locale.
+
+- All user-visible strings must be defined in `app/src/main/res/values/strings.xml` (English)
+- Every string must also have an Italian translation in `app/src/main/res/values-it/strings.xml`
+- Never hardcode strings in Kotlin/Compose code — always use `stringResource(R.string.key)` or `stringResource(R.string.key, arg)` for parameterised strings
+- This rule applies to every change: new screens, new UI components, error messages, labels, placeholders, etc.
