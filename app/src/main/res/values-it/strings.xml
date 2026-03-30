@@ -7,4 +7,8 @@
     <string name="history_empty">Nessun testo archiviato</string>
     <string name="clipboard_label">CopyKraken</string>
     <string name="share_received_toast">Testo aggiunto e copiato negli appunti</string>
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_max_history_label">Elementi massimi nello storico</string>
+    <string name="settings_max_history_supporting">Numero di testi archiviati da mantenere (predefinito: 100)</string>
+    <string name="navigate_back">Indietro</string>
 </resources>

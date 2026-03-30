@@ -20,6 +20,10 @@ class AppStorage(context: Context) {
             prefs.edit().putString(KEY_HISTORY, JSONArray(value).toString()).apply()
         }
 
+    var maxHistorySize: Int
+        get() = prefs.getInt(KEY_MAX_HISTORY, 100)
+        set(value) { prefs.edit().putInt(KEY_MAX_HISTORY, value).apply() }
+
     fun appendText(text: String): String {
         val newText = currentText.let { if (it.isEmpty()) text else "$it\n$text" }
         currentText = newText
@@ -29,5 +33,6 @@ class AppStorage(context: Context) {
     companion object {
         private const val KEY_CURRENT = "currentText"
         private const val KEY_HISTORY = "history"
+        private const val KEY_MAX_HISTORY = "maxHistorySize"
     }
 }

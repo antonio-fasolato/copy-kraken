@@ -34,13 +34,27 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     )
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
+    private val _maxHistorySize = MutableStateFlow(storage.maxHistorySize)
+    val maxHistorySize: StateFlow<Int> = _maxHistorySize.asStateFlow()
+
+    fun setMaxHistorySize(value: Int) {
+        if (value < 1) return
+        storage.maxHistorySize = value
+        _maxHistorySize.value = value
+        val trimmed = _uiState.value.history.take(value)
+        if (trimmed.size < _uiState.value.history.size) {
+            storage.history = trimmed
+            _uiState.update { it.copy(history = trimmed) }
+        }
+    }
+
     fun reload() {
         _uiState.update { MainUiState(currentText = storage.currentText, history = storage.history) }
     }
 
     fun archiveCurrent() {
         val current = _uiState.value.currentText.ifEmpty { return }
-        val newHistory = listOf(current) + _uiState.value.history
+        val newHistory = (listOf(current) + _uiState.value.history).take(storage.maxHistorySize)
         storage.currentText = ""
         storage.history = newHistory
         _uiState.update { MainUiState(currentText = "", history = newHistory) }
