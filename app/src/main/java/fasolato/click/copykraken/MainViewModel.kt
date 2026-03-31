@@ -37,6 +37,14 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val _maxHistorySize = MutableStateFlow(storage.maxHistorySize)
     val maxHistorySize: StateFlow<Int> = _maxHistorySize.asStateFlow()
 
+    private val _showFullHistoryText = MutableStateFlow(storage.showFullHistoryText)
+    val showFullHistoryText: StateFlow<Boolean> = _showFullHistoryText.asStateFlow()
+
+    fun setShowFullHistoryText(value: Boolean) {
+        storage.showFullHistoryText = value
+        _showFullHistoryText.value = value
+    }
+
     fun setMaxHistorySize(value: Int) {
         if (value < 1) return
         storage.maxHistorySize = value

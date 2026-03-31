@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
             CopyKrakenTheme {
                 val uiState by viewModel.uiState.collectAsState()
                 val maxHistorySize by viewModel.maxHistorySize.collectAsState()
+                val showFullHistoryText by viewModel.showFullHistoryText.collectAsState()
                 val context = LocalContext.current
                 var showSettings by remember { mutableStateOf(false) }
 
@@ -87,6 +88,8 @@ class MainActivity : ComponentActivity() {
                         SettingsScreen(
                             maxHistorySize = maxHistorySize,
                             onMaxHistorySizeChange = viewModel::setMaxHistorySize,
+                            showFullHistoryText = showFullHistoryText,
+                            onShowFullHistoryTextChange = viewModel::setShowFullHistoryText,
                             modifier = Modifier.padding(innerPadding)
                         )
                     } else {
@@ -95,6 +98,7 @@ class MainActivity : ComponentActivity() {
                             onArchive = viewModel::archiveCurrent,
                             onRestoreFromHistory = viewModel::restoreFromHistory,
                             onSettingsClick = { showSettings = true },
+                            showFullHistoryText = showFullHistoryText,
                             modifier = Modifier.padding(innerPadding)
                         )
                     }

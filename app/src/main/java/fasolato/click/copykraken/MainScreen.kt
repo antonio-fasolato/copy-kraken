@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,7 @@ fun MainScreen(
     onArchive: () -> Unit,
     onRestoreFromHistory: (Int) -> Unit,
     onSettingsClick: () -> Unit,
+    showFullHistoryText: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier.padding(horizontal = 16.dp)) {
@@ -71,11 +73,14 @@ fun MainScreen(
             )
         }
         item {
+            val lineHeightDp = with(LocalDensity.current) {
+                MaterialTheme.typography.bodyMedium.lineHeight.toPx().toDp()
+            }
             Card(modifier = Modifier.fillMaxWidth()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 80.dp, max = 240.dp)
+                        .heightIn(min = lineHeightDp * 2, max = lineHeightDp * 10 + 24.dp)
                         .verticalScroll(rememberScrollState())
                         .padding(12.dp)
                 ) {
@@ -113,7 +118,8 @@ fun MainScreen(
                     )
                 ) {
                     Text(
-                        text = uiState.history[index],
+                        text = if (showFullHistoryText) uiState.history[index]
+                           else truncateHistoryItem(uiState.history[index]),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(12.dp)
                     )
@@ -121,6 +127,11 @@ fun MainScreen(
             }
         }
     }
+}
+
+private fun truncateHistoryItem(text: String): String {
+    if (text.length <= 100) return text
+    return "${text.take(50)}...${text.takeLast(50)}"
 }
 
 @Preview(showBackground = true)

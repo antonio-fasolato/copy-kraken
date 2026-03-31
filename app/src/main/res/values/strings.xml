@@ -11,4 +11,5 @@
     <string name="settings_max_history_label">Max history items</string>
     <string name="settings_max_history_supporting">Number of archived texts to keep (default: 100)</string>
     <string name="navigate_back">Back</string>
+    <string name="settings_show_full_history_label">Show full text in history</string>
 </resources>

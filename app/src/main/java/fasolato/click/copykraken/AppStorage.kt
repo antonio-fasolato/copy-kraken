@@ -24,6 +24,10 @@ class AppStorage(context: Context) {
         get() = prefs.getInt(KEY_MAX_HISTORY, 100)
         set(value) { prefs.edit().putInt(KEY_MAX_HISTORY, value).apply() }
 
+    var showFullHistoryText: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_FULL_HISTORY, false)
+        set(value) { prefs.edit().putBoolean(KEY_SHOW_FULL_HISTORY, value).apply() }
+
     fun appendText(text: String): String {
         val newText = currentText.let { if (it.isEmpty()) text else "$it\n$text" }
         currentText = newText
@@ -34,5 +38,6 @@ class AppStorage(context: Context) {
         private const val KEY_CURRENT = "currentText"
         private const val KEY_HISTORY = "history"
         private const val KEY_MAX_HISTORY = "maxHistorySize"
+        private const val KEY_SHOW_FULL_HISTORY = "showFullHistoryText"
     }
 }

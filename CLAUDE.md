@@ -33,15 +33,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The app uses a single-Activity architecture with Jetpack Compose:
 
-- **`MainActivity`** — sole entry point; hosts the Compose UI tree inside a `Scaffold` with a FAB; calls `viewModel.reload()` in `onResume`; collects `clipboardEvent` via `LaunchedEffect` to write to `ClipboardManager`
-- **`MainViewModel`** — `AndroidViewModel`; initialises state from `AppStorage`; exposes `uiState: StateFlow<MainUiState>` and `clipboardEvent: SharedFlow<String>`; methods: `reload()`, `archiveCurrent()`, `restoreFromHistory(index)`
-- **`MainScreen`** — stateless composable; receives `MainUiState`, `onArchive`, `onRestoreFromHistory`; renders app header (name + description), current text card, history list with tappable cards
-- **`AppStorage`** — `SharedPreferences` wrapper; persists `currentText` and `history` (serialised via `org.json.JSONArray`); method `appendText(text): String`
+- **`MainActivity`** — sole entry point; hosts `Scaffold` with FAB and conditional `TopAppBar`; `var showSettings` drives Main ↔ Settings navigation; calls `viewModel.reload()` in `onResume`; collects `clipboardEvent` via `LaunchedEffect` to write to `ClipboardManager`
+- **`MainViewModel`** — `AndroidViewModel`; initialises state from `AppStorage`; exposes `uiState: StateFlow<MainUiState>`, `maxHistorySize: StateFlow<Int>`, `showFullHistoryText: StateFlow<Boolean>`, `clipboardEvent: SharedFlow<String>`; methods: `reload()`, `archiveCurrent()`, `restoreFromHistory(index)`, `setMaxHistorySize(value)`, `setShowFullHistoryText(value)`
+- **`MainScreen`** — stateless composable; receives `MainUiState`, `onArchive`, `onRestoreFromHistory`, `onSettingsClick`, `showFullHistoryText`; renders header row (app name + settings icon), description, current text card (max 10 lines, scrollable), tappable history cards (truncated or full based on `showFullHistoryText`)
+- **`SettingsScreen`** — stateless composable; receives `maxHistorySize`, `onMaxHistorySizeChange`, `showFullHistoryText`, `onShowFullHistoryTextChange`; renders `OutlinedTextField` for limit and `Switch` for full-text toggle
+- **`AppStorage`** — `SharedPreferences` wrapper; persists `currentText`, `history` (via `org.json.JSONArray`), `maxHistorySize` (Int, default 100), `showFullHistoryText` (Boolean, default false); method `appendText(text): String`
 - **`ShareReceiverActivity`** — bare `Activity` with `Theme.NoDisplay`; receives `ACTION_SEND / text/plain`; appends text via `AppStorage`, copies to clipboard, shows Toast, calls `finish()` immediately
 - **`ui/theme/`** — Material3 theme (Color, Type, Theme); dynamic color enabled for Android 12+
 - Package root: `fasolato.click.copykraken`
 
 New screens should be added as composable functions, placed in packages under the main package (e.g., `fasolato.click.copykraken.feature.featurename`).
+
+## Navigation
+
+No `navigation-compose` dependency. Navigation between Main and Settings is driven by `var showSettings by remember { mutableStateOf(false) }` in `MainActivity`. The `TopAppBar` (with back arrow + "Settings" title) is shown only when `showSettings == true`.
 
 ## Share target
 
@@ -53,7 +58,21 @@ The app registers as an Android share target for `text/plain` via `ShareReceiver
 
 ## UI — FAB
 
-The archive action is a `FloatingActionButton` (bottom-right) using `Icons.Default.Archive` from `material-icons-extended`. It is visible only when `currentText` is non-empty.
+The archive action is a `FloatingActionButton` (bottom-right) using `Icons.Default.Archive` from `material-icons-extended`. Visible only when `currentText` is non-empty and `showSettings == false`.
+
+## UI — Text display rules
+
+- **Current text card**: max height = `lineHeight × 10 + 24dp` (computed from `MaterialTheme.typography.bodyMedium.lineHeight` via `LocalDensity`); scrollable within the card
+- **History items**: controlled by `showFullHistoryText` setting (default `false`)
+  - `false` (default): if text ≤ 100 chars → show full; if > 100 chars → first 50 + `...` + last 50 (via `truncateHistoryItem()` in `MainScreen.kt`)
+  - `true`: always show full text
+
+## Settings
+
+Accessible via the gear icon to the right of the app name in `MainScreen`.
+
+- **Max history items** (`maxHistorySize`, default 100): maximum number of entries kept in the history list; stored in `AppStorage`; `archiveCurrent()` applies `.take(maxHistorySize)` after prepending; `setMaxHistorySize()` trims existing history immediately if it exceeds the new value
+- **Show full text in history** (`showFullHistoryText`, default `false`): when `false`, history cards show first 50 + `...` + last 50 chars for texts longer than 100 chars; when `true`, always shows full text
 
 ## History interaction
 

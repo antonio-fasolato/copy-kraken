@@ -1,12 +1,16 @@
 package fasolato.click.copykraken
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +27,8 @@ import fasolato.click.copykraken.ui.theme.CopyKrakenTheme
 fun SettingsScreen(
     maxHistorySize: Int,
     onMaxHistorySizeChange: (Int) -> Unit,
+    showFullHistoryText: Boolean,
+    onShowFullHistoryTextChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var inputText by remember(maxHistorySize) { mutableStateOf(maxHistorySize.toString()) }
@@ -48,6 +54,22 @@ fun SettingsScreen(
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.settings_show_full_history_label),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Switch(
+                checked = showFullHistoryText,
+                onCheckedChange = onShowFullHistoryTextChange
+            )
+        }
     }
 }
 
@@ -55,6 +77,11 @@ fun SettingsScreen(
 @Composable
 private fun SettingsScreenPreview() {
     CopyKrakenTheme {
-        SettingsScreen(maxHistorySize = 100, onMaxHistorySizeChange = {})
+        SettingsScreen(
+            maxHistorySize = 100,
+            onMaxHistorySizeChange = {},
+            showFullHistoryText = false,
+            onShowFullHistoryTextChange = {}
+        )
     }
 }
