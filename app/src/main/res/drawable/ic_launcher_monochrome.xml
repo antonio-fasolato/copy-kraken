@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive icon monochrome layer – used by Android 13+ for themed icons.
+     All shapes are white/transparent; the system applies its own tint at runtime.
+     evenOdd fill on the body+eye compound path punches through the eye sockets. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- ===================== TENTACLES ===================== -->
+
+    <path
+        android:pathData="M 40,52 C 24,57 18,68 26,78"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M 47,55 C 37,63 36,73 42,81"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M 61,55 C 71,63 72,73 66,81"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M 68,52 C 84,57 90,68 82,78"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"/>
+
+    <!-- ===================== BODY + EYE HOLES ===================== -->
+
+    <!-- Compound path: body ellipse with eye circles cut out via evenOdd -->
+    <path
+        android:pathData="M 54,21 A 19,17 0 1,0 54,55 A 19,17 0 1,0 54,21 Z
+                          M 46,28.5 A 6.5,6.5 0 1,0 46,41.5 A 6.5,6.5 0 1,0 46,28.5 Z
+                          M 62,28.5 A 6.5,6.5 0 1,0 62,41.5 A 6.5,6.5 0 1,0 62,28.5 Z"
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"/>
+
+    <!-- Eye pupils (white circles on top of punched-out holes) -->
+    <path
+        android:pathData="M 46,31.2 A 3.8,3.8 0 1,0 46,38.8 A 3.8,3.8 0 1,0 46,31.2 Z"
+        android:fillColor="#FFFFFF"/>
+    <path
+        android:pathData="M 62,31.2 A 3.8,3.8 0 1,0 62,38.8 A 3.8,3.8 0 1,0 62,31.2 Z"
+        android:fillColor="#FFFFFF"/>
+
+    <!-- Smile -->
+    <path
+        android:pathData="M 47,43 Q 54,50 61,43"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"/>
+
+    <!-- ===================== LETTER TILES ===================== -->
+
+    <path
+        android:pathData="M 36,76 L 47,76 Q 50,76 50,79 L 50,87 Q 50,90 47,90 L 36,90 Q 33,90 33,87 L 33,79 Q 33,76 36,76 Z"
+        android:fillColor="#FFFFFF"/>
+    <path
+        android:pathData="M 61,76 L 72,76 Q 75,76 75,79 L 75,87 Q 75,90 72,90 L 61,90 Q 58,90 58,87 L 58,79 Q 58,76 61,76 Z"
+        android:fillColor="#FFFFFF"/>
+    <path
+        android:pathData="M 78,72 L 89,72 Q 92,72 92,75 L 92,83 Q 92,86 89,86 L 78,86 Q 75,86 75,83 L 75,75 Q 75,72 78,72 Z"
+        android:fillColor="#FFFFFF"/>
+
+</vector>

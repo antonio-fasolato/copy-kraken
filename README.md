@@ -1,5 +1,9 @@
 # Copy Kraken
 
+<p align="center">
+  <img src="docs/icon.png" width="96" alt="Copy Kraken icon"/>
+</p>
+
 Collect text shared from any Android app, accumulate it, and keep it ready on your clipboard.
 
 Copy Kraken lives in the Android share menu. Every time you share a piece of text from any app, Copy Kraken silently appends it to your current buffer without switching away from what you were doing. When you are ready, open the app to review the accumulated text, archive it for later, or restore a previous entry — all automatically copied to the clipboard.
