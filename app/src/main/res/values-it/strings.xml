@@ -12,4 +12,5 @@
     <string name="settings_max_history_supporting">Numero di testi archiviati da mantenere (predefinito: 100)</string>
     <string name="navigate_back">Indietro</string>
     <string name="settings_show_full_history_label">Mostra testo completo nello storico</string>
+    <string name="history_char_count">%1$d caratteri</string>
 </resources>

@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 data class MainUiState(
     val currentText: String = "",
-    val history: List<String> = emptyList()
+    val history: List<HistoryEntry> = emptyList()
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -62,7 +62,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun archiveCurrent() {
         val current = _uiState.value.currentText.ifEmpty { return }
-        val newHistory = (listOf(current) + _uiState.value.history).take(storage.maxHistorySize)
+        val newHistory = (listOf(HistoryEntry(current, System.currentTimeMillis())) + _uiState.value.history)
+            .take(storage.maxHistorySize)
         storage.currentText = ""
         storage.history = newHistory
         _uiState.update { MainUiState(currentText = "", history = newHistory) }
@@ -73,10 +74,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val restored = state.history.getOrNull(index) ?: return
         val remaining = state.history.toMutableList().also { it.removeAt(index) }
         val newHistory = if (state.currentText.isEmpty()) remaining
-                         else listOf(state.currentText) + remaining
-        storage.currentText = restored
+                         else listOf(HistoryEntry(state.currentText, System.currentTimeMillis())) + remaining
+        storage.currentText = restored.text
         storage.history = newHistory
-        _uiState.update { MainUiState(currentText = restored, history = newHistory) }
-        viewModelScope.launch { _clipboardEvent.emit(restored) }
+        _uiState.update { MainUiState(currentText = restored.text, history = newHistory) }
+        viewModelScope.launch { _clipboardEvent.emit(restored.text) }
     }
 }

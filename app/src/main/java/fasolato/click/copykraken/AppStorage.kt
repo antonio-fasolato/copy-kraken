@@ -2,6 +2,7 @@ package fasolato.click.copykraken
 
 import android.content.Context
 import org.json.JSONArray
+import org.json.JSONObject
 
 class AppStorage(context: Context) {
     private val prefs = context.getSharedPreferences("copykraken", Context.MODE_PRIVATE)
@@ -10,14 +11,29 @@ class AppStorage(context: Context) {
         get() = prefs.getString(KEY_CURRENT, "") ?: ""
         set(value) { prefs.edit().putString(KEY_CURRENT, value).apply() }
 
-    var history: List<String>
+    var history: List<HistoryEntry>
         get() {
             val raw = prefs.getString(KEY_HISTORY, "[]") ?: "[]"
             val arr = JSONArray(raw)
-            return List(arr.length()) { arr.getString(it) }
+            return List(arr.length()) { i ->
+                when (val element = arr.get(i)) {
+                    is JSONObject -> HistoryEntry(
+                        text = element.getString("text"),
+                        timestamp = element.getLong("timestamp")
+                    )
+                    // migration: old format stored plain strings
+                    else -> HistoryEntry(text = arr.getString(i), timestamp = 0L)
+                }
+            }
         }
         set(value) {
-            prefs.edit().putString(KEY_HISTORY, JSONArray(value).toString()).apply()
+            val arr = JSONArray(value.map { entry ->
+                JSONObject().apply {
+                    put("text", entry.text)
+                    put("timestamp", entry.timestamp)
+                }
+            })
+            prefs.edit().putString(KEY_HISTORY, arr.toString()).apply()
         }
 
     var maxHistorySize: Int
