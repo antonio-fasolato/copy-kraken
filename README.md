@@ -4,6 +4,14 @@
   <img src="docs/icon.png" width="96" alt="Copy Kraken icon"/>
 </p>
 
+<p align="center">
+  <a href="https://github.com/antonio-fasolato/copy-kraken/releases/latest"><img src="https://img.shields.io/github/v/release/antonio-fasolato/copy-kraken" alt="Latest release"/></a>
+  <a href="https://github.com/antonio-fasolato/copy-kraken/releases/latest"><img src="https://img.shields.io/github/downloads/antonio-fasolato/copy-kraken/total" alt="Total downloads"/></a>
+  <a href="https://github.com/antonio-fasolato/copy-kraken/actions"><img src="https://img.shields.io/github/actions/workflow/status/antonio-fasolato/copy-kraken/android.yml?branch=main" alt="Build status"/></a>
+  <a href="https://github.com/antonio-fasolato/copy-kraken/blob/main/LICENSE"><img src="https://img.shields.io/github/license/antonio-fasolato/copy-kraken" alt="License"/></a>
+  <img src="https://img.shields.io/badge/Android-13%2B-green?logo=android" alt="Android 13+"/>
+</p>
+
 Collect text shared from any Android app, accumulate it, and keep it ready on your clipboard.
 
 Copy Kraken lives in the Android share menu. Every time you share a piece of text from any app, Copy Kraken silently appends it to your current buffer without switching away from what you were doing. When you are ready, open the app to review the accumulated text, archive it for later, or restore a previous entry — all automatically copied to the clipboard.
