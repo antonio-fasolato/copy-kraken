@@ -17,6 +17,7 @@ Copy Kraken lives in the Android share menu. Every time you share a piece of tex
 - **Clipboard sync** — the full current text is copied to the clipboard whenever it changes
 - **Archive & history** — archive the current buffer to a history list and start fresh; tap any history entry to restore it
 - **Configurable history size** — set the maximum number of entries to keep (default: 100)
+- **Auto-archive on stale session** — if the current buffer is older than a configurable threshold (default: 10 minutes), it is automatically archived when a new text arrives, so each "session" stays focused on one topic
 - **Full / truncated display** — history cards show a preview by default (first 50 + last 50 chars); toggle full text in Settings
 - **Timestamps & character count** — each history entry shows when it was created and how many characters it contains
 - **Localised** — English (default) and Italian
@@ -64,14 +65,22 @@ The APK is produced at:
 
 ## Install on a device
 
-### Using ADB (recommended for development)
+### From GitHub Releases (recommended)
+
+1. Go to the [Releases](../../releases) page of this repository
+2. Download the latest `app-release.apk`
+3. On your Android device, open the downloaded APK
+4. If prompted, allow installation from unknown sources for your browser or file manager
+5. Follow the on-screen instructions to complete the installation
+
+### Using ADB (for development)
 
 ```bash
 # Connect your device via USB with USB debugging enabled, then:
 adb install app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### Manual APK installation
+### Manual APK installation (from source build)
 
 1. Copy `app-debug.apk` to your Android device (USB, cloud storage, email, etc.)
 2. On the device, open the APK file from a file manager
@@ -113,6 +122,7 @@ Tap the gear icon next to the app title to open Settings:
 | Setting | Description | Default |
 |---------|-------------|---------|
 | Max history items | Maximum number of entries kept in history | 100 |
+| Auto-archive after (minutes) | Automatically archive the current buffer when a new text arrives and the buffer is older than this many minutes | 10 |
 | Show full text in history | Show complete text in history cards instead of a preview | Off |
 
 ---

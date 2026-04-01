@@ -34,10 +34,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 The app uses a single-Activity architecture with Jetpack Compose:
 
 - **`MainActivity`** — sole entry point; hosts `Scaffold` with FAB and conditional `TopAppBar`; `var showSettings` drives Main ↔ Settings navigation; calls `viewModel.reload()` in `onResume`; collects `clipboardEvent` via `LaunchedEffect` to write to `ClipboardManager`
-- **`MainViewModel`** — `AndroidViewModel`; initialises state from `AppStorage`; exposes `uiState: StateFlow<MainUiState>`, `maxHistorySize: StateFlow<Int>`, `showFullHistoryText: StateFlow<Boolean>`, `clipboardEvent: SharedFlow<String>`; methods: `reload()`, `archiveCurrent()`, `restoreFromHistory(index)`, `setMaxHistorySize(value)`, `setShowFullHistoryText(value)`
+- **`MainViewModel`** — `AndroidViewModel`; initialises state from `AppStorage`; exposes `uiState: StateFlow<MainUiState>`, `maxHistorySize: StateFlow<Int>`, `showFullHistoryText: StateFlow<Boolean>`, `autoArchiveMinutes: StateFlow<Int>`, `clipboardEvent: SharedFlow<String>`; methods: `reload()`, `archiveCurrent()`, `restoreFromHistory(index)`, `setMaxHistorySize(value)`, `setShowFullHistoryText(value)`, `setAutoArchiveMinutes(value)`
 - **`MainScreen`** — stateless composable; receives `MainUiState`, `onArchive`, `onRestoreFromHistory`, `onSettingsClick`, `showFullHistoryText`; renders header row (app name + settings icon), description, current text card (max 10 lines, scrollable), tappable history cards (truncated or full based on `showFullHistoryText`)
-- **`SettingsScreen`** — stateless composable; receives `maxHistorySize`, `onMaxHistorySizeChange`, `showFullHistoryText`, `onShowFullHistoryTextChange`; renders `OutlinedTextField` for limit and `Switch` for full-text toggle
-- **`AppStorage`** — `SharedPreferences` wrapper; persists `currentText`, `history` (via `org.json.JSONArray`), `maxHistorySize` (Int, default 100), `showFullHistoryText` (Boolean, default false); method `appendText(text): String`
+- **`SettingsScreen`** — stateless composable; receives `maxHistorySize`, `onMaxHistorySizeChange`, `showFullHistoryText`, `onShowFullHistoryTextChange`, `autoArchiveMinutes`, `onAutoArchiveMinutesChange`; renders two `OutlinedTextField`s (history limit, auto-archive minutes) and a `Switch` for full-text toggle
+- **`AppStorage`** — `SharedPreferences` wrapper; persists `currentText`, `history` (via `org.json.JSONArray`), `maxHistorySize` (Int, default 100), `showFullHistoryText` (Boolean, default false), `autoArchiveMinutes` (Int, default 10), `currentTextTimestamp` (Long); method `appendText(text): String` — auto-archives current text before appending if it is older than `autoArchiveMinutes`
 - **`ShareReceiverActivity`** — bare `Activity` with `Theme.NoDisplay`; receives `ACTION_SEND / text/plain`; appends text via `AppStorage`, copies to clipboard, shows Toast, calls `finish()` immediately
 - **`ui/theme/`** — Material3 theme (Color, Type, Theme); dynamic color enabled for Android 12+
 - Package root: `fasolato.click.copykraken`
@@ -73,6 +73,7 @@ Accessible via the gear icon to the right of the app name in `MainScreen`.
 
 - **Max history items** (`maxHistorySize`, default 100): maximum number of entries kept in the history list; stored in `AppStorage`; `archiveCurrent()` applies `.take(maxHistorySize)` after prepending; `setMaxHistorySize()` trims existing history immediately if it exceeds the new value
 - **Show full text in history** (`showFullHistoryText`, default `false`): when `false`, history cards show first 50 + `...` + last 50 chars for texts longer than 100 chars; when `true`, always shows full text
+- **Auto-archive after N minutes** (`autoArchiveMinutes`, default 10): when a text is shared via `ShareReceiverActivity`, if the current text exists and its session started more than N minutes ago, it is automatically archived and the new text begins a fresh session; logic is entirely in `AppStorage.appendText()`; `currentTextTimestamp` (Long) tracks when the session started (set once on the first append to an empty buffer, reset to `0L` on archive)
 
 ## History interaction
 
