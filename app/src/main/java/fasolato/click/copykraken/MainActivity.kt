@@ -93,6 +93,7 @@ class MainActivity : ComponentActivity() {
                             onShowFullHistoryTextChange = viewModel::setShowFullHistoryText,
                             autoArchiveMinutes = autoArchiveMinutes,
                             onAutoArchiveMinutesChange = viewModel::setAutoArchiveMinutes,
+                            onClearHistory = viewModel::clearHistory,
                             modifier = Modifier.padding(innerPadding)
                         )
                     } else {

@@ -3,13 +3,19 @@ package fasolato.click.copykraken
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,12 +37,14 @@ fun SettingsScreen(
     onShowFullHistoryTextChange: (Boolean) -> Unit,
     autoArchiveMinutes: Int,
     onAutoArchiveMinutesChange: (Int) -> Unit,
+    onClearHistory: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var inputText by remember(maxHistorySize) { mutableStateOf(maxHistorySize.toString()) }
     var autoArchiveInput by remember(autoArchiveMinutes) { mutableStateOf(autoArchiveMinutes.toString()) }
+    var showClearConfirm by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier.padding(horizontal = 16.dp, vertical = 24.dp)) {
+    Column(modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 24.dp)) {
         Text(
             text = stringResource(R.string.settings_title),
             style = MaterialTheme.typography.headlineMedium,
@@ -70,12 +78,12 @@ fun SettingsScreen(
             supportingText = { Text(stringResource(R.string.settings_auto_archive_supporting)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
+                .padding(top = 24.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -88,6 +96,43 @@ fun SettingsScreen(
                 onCheckedChange = onShowFullHistoryTextChange
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            onClick = { showClearConfirm = true },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        ) {
+            Text(stringResource(R.string.settings_clear_history_button))
+        }
+    }
+
+    if (showClearConfirm) {
+        AlertDialog(
+            onDismissRequest = { showClearConfirm = false },
+            title = { Text(stringResource(R.string.settings_clear_history_confirm_title)) },
+            text = { Text(stringResource(R.string.settings_clear_history_confirm_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showClearConfirm = false
+                        onClearHistory()
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text(stringResource(R.string.settings_clear_history_confirm_ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearConfirm = false }) {
+                    Text(stringResource(R.string.settings_clear_history_confirm_cancel))
+                }
+            }
+        )
     }
 }
 
@@ -101,7 +146,8 @@ private fun SettingsScreenPreview() {
             showFullHistoryText = false,
             onShowFullHistoryTextChange = {},
             autoArchiveMinutes = 10,
-            onAutoArchiveMinutesChange = {}
+            onAutoArchiveMinutesChange = {},
+            onClearHistory = {}
         )
     }
 }

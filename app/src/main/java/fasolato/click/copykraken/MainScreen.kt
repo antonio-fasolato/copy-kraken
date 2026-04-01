@@ -101,7 +101,7 @@ fun MainScreen(
             Text(
                 text = stringResource(R.string.history_label),
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
             )
         }
         if (uiState.history.isEmpty()) {

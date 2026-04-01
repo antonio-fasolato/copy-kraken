@@ -79,6 +79,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _uiState.update { MainUiState(currentText = "", history = newHistory) }
     }
 
+    fun clearHistory() {
+        storage.history = emptyList()
+        _uiState.update { it.copy(history = emptyList()) }
+    }
+
     fun restoreFromHistory(index: Int) {
         val state = _uiState.value
         val restored = state.history.getOrNull(index) ?: return
