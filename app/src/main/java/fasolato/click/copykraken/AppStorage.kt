@@ -44,9 +44,30 @@ class AppStorage(context: Context) {
         get() = prefs.getBoolean(KEY_SHOW_FULL_HISTORY, false)
         set(value) { prefs.edit().putBoolean(KEY_SHOW_FULL_HISTORY, value).apply() }
 
+    var autoArchiveMinutes: Int
+        get() = prefs.getInt(KEY_AUTO_ARCHIVE_MINUTES, 10)
+        set(value) { prefs.edit().putInt(KEY_AUTO_ARCHIVE_MINUTES, value).apply() }
+
+    var currentTextTimestamp: Long
+        get() = prefs.getLong(KEY_CURRENT_TIMESTAMP, 0L)
+        set(value) { prefs.edit().putLong(KEY_CURRENT_TIMESTAMP, value).apply() }
+
     fun appendText(text: String): String {
-        val newText = currentText.let { if (it.isEmpty()) text else "$it\n$text" }
+        val now = System.currentTimeMillis()
+        val existing = currentText
+        if (existing.isNotEmpty()) {
+            val ageMillis = now - currentTextTimestamp
+            val thresholdMillis = autoArchiveMinutes * 60_000L
+            if (ageMillis >= thresholdMillis) {
+                history = (listOf(HistoryEntry(existing, currentTextTimestamp)) + history).take(maxHistorySize)
+                currentText = ""
+                currentTextTimestamp = 0L
+            }
+        }
+        val base = currentText
+        val newText = if (base.isEmpty()) text else "$base\n$text"
         currentText = newText
+        if (currentTextTimestamp == 0L) currentTextTimestamp = now
         return newText
     }
 
@@ -55,5 +76,7 @@ class AppStorage(context: Context) {
         private const val KEY_HISTORY = "history"
         private const val KEY_MAX_HISTORY = "maxHistorySize"
         private const val KEY_SHOW_FULL_HISTORY = "showFullHistoryText"
+        private const val KEY_AUTO_ARCHIVE_MINUTES = "autoArchiveMinutes"
+        private const val KEY_CURRENT_TIMESTAMP = "currentTextTimestamp"
     }
 }

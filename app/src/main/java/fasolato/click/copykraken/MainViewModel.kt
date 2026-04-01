@@ -40,6 +40,15 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val _showFullHistoryText = MutableStateFlow(storage.showFullHistoryText)
     val showFullHistoryText: StateFlow<Boolean> = _showFullHistoryText.asStateFlow()
 
+    private val _autoArchiveMinutes = MutableStateFlow(storage.autoArchiveMinutes)
+    val autoArchiveMinutes: StateFlow<Int> = _autoArchiveMinutes.asStateFlow()
+
+    fun setAutoArchiveMinutes(value: Int) {
+        if (value < 1) return
+        storage.autoArchiveMinutes = value
+        _autoArchiveMinutes.value = value
+    }
+
     fun setShowFullHistoryText(value: Boolean) {
         storage.showFullHistoryText = value
         _showFullHistoryText.value = value
@@ -65,8 +74,14 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val newHistory = (listOf(HistoryEntry(current, System.currentTimeMillis())) + _uiState.value.history)
             .take(storage.maxHistorySize)
         storage.currentText = ""
+        storage.currentTextTimestamp = 0L
         storage.history = newHistory
         _uiState.update { MainUiState(currentText = "", history = newHistory) }
+    }
+
+    fun clearHistory() {
+        storage.history = emptyList()
+        _uiState.update { it.copy(history = emptyList()) }
     }
 
     fun restoreFromHistory(index: Int) {
@@ -76,6 +91,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val newHistory = if (state.currentText.isEmpty()) remaining
                          else listOf(HistoryEntry(state.currentText, System.currentTimeMillis())) + remaining
         storage.currentText = restored.text
+        storage.currentTextTimestamp = System.currentTimeMillis()
         storage.history = newHistory
         _uiState.update { MainUiState(currentText = restored.text, history = newHistory) }
         viewModelScope.launch { _clipboardEvent.emit(restored.text) }
