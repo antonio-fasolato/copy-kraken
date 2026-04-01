@@ -29,9 +29,12 @@ fun SettingsScreen(
     onMaxHistorySizeChange: (Int) -> Unit,
     showFullHistoryText: Boolean,
     onShowFullHistoryTextChange: (Boolean) -> Unit,
+    autoArchiveMinutes: Int,
+    onAutoArchiveMinutesChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var inputText by remember(maxHistorySize) { mutableStateOf(maxHistorySize.toString()) }
+    var autoArchiveInput by remember(autoArchiveMinutes) { mutableStateOf(autoArchiveMinutes.toString()) }
 
     Column(modifier = modifier.padding(horizontal = 16.dp, vertical = 24.dp)) {
         Text(
@@ -50,6 +53,21 @@ fun SettingsScreen(
             },
             label = { Text(stringResource(R.string.settings_max_history_label)) },
             supportingText = { Text(stringResource(R.string.settings_max_history_supporting)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = autoArchiveInput,
+            onValueChange = { raw ->
+                autoArchiveInput = raw
+                val parsed = raw.toIntOrNull()
+                if (parsed != null && parsed >= 1) {
+                    onAutoArchiveMinutesChange(parsed)
+                }
+            },
+            label = { Text(stringResource(R.string.settings_auto_archive_label)) },
+            supportingText = { Text(stringResource(R.string.settings_auto_archive_supporting)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
@@ -81,7 +99,9 @@ private fun SettingsScreenPreview() {
             maxHistorySize = 100,
             onMaxHistorySizeChange = {},
             showFullHistoryText = false,
-            onShowFullHistoryTextChange = {}
+            onShowFullHistoryTextChange = {},
+            autoArchiveMinutes = 10,
+            onAutoArchiveMinutesChange = {}
         )
     }
 }

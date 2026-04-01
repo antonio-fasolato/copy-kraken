@@ -13,4 +13,6 @@
     <string name="navigate_back">Back</string>
     <string name="settings_show_full_history_label">Show full text in history</string>
     <string name="history_char_count">%1$d chars</string>
+    <string name="settings_auto_archive_label">Auto-archive after (minutes)</string>
+    <string name="settings_auto_archive_supporting">Automatically archive if the current text is older than this many minutes (default: 10)</string>
 </resources>

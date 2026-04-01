@@ -13,4 +13,6 @@
     <string name="navigate_back">Indietro</string>
     <string name="settings_show_full_history_label">Mostra testo completo nello storico</string>
     <string name="history_char_count">%1$d caratteri</string>
+    <string name="settings_auto_archive_label">Archivia automaticamente dopo (minuti)</string>
+    <string name="settings_auto_archive_supporting">Archivia automaticamente se il testo corrente è più vecchio di questi minuti (predefinito: 10)</string>
 </resources>

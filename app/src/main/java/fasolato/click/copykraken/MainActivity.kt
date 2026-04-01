@@ -44,6 +44,7 @@ class MainActivity : ComponentActivity() {
                 val uiState by viewModel.uiState.collectAsState()
                 val maxHistorySize by viewModel.maxHistorySize.collectAsState()
                 val showFullHistoryText by viewModel.showFullHistoryText.collectAsState()
+                val autoArchiveMinutes by viewModel.autoArchiveMinutes.collectAsState()
                 val context = LocalContext.current
                 var showSettings by remember { mutableStateOf(false) }
 
@@ -90,6 +91,8 @@ class MainActivity : ComponentActivity() {
                             onMaxHistorySizeChange = viewModel::setMaxHistorySize,
                             showFullHistoryText = showFullHistoryText,
                             onShowFullHistoryTextChange = viewModel::setShowFullHistoryText,
+                            autoArchiveMinutes = autoArchiveMinutes,
+                            onAutoArchiveMinutesChange = viewModel::setAutoArchiveMinutes,
                             modifier = Modifier.padding(innerPadding)
                         )
                     } else {
